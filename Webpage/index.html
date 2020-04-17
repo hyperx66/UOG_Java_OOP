@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>OOP Assignment</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/simple-line-icons/css/simple-line-icons.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/new-age.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand js-scroll-trigger" href="#page-top">OOP Assignment</a>
+        </div>
+    </nav>
+
+
+    <header class="masthead">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-6 my-auto">
+                    <canvas id="sgChart" width="400" height="400"></canvas>
+                </div>
+                <div class="col-lg-6 my-auto">
+                    <canvas id="globalChart" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-danger text-center" id="download">
+        <div class="container">
+            <p style="color: #fff; font-size:x-large; text-shadow: 1.5px 1.5px #000;">Web Crawler Data from MOH</p>
+            <div class="row">
+                <div class="card shadow mb-4" style="width: 80rem;">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Identity</th>
+                                        <th>Data</th>
+                                        <th>Focus</th>
+                                        <th>Time Stamp</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Identity</th>
+                                        <th>Data</th>
+                                        <th>Focus</th>
+                                        <th>Time Stamp</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-dark text-center" id="analySis">
+        <div class="container">
+            <p style="color: #fff; font-size:x-large; text-shadow: 1.5px 1.5px #000;">Sentimental Analysis (Twitter)</p>
+            <div class="row">
+                <div class="col-lg-6 my-auto" id="conclusionSpeech" style="color:#fff">
+                </div>
+                <div class="col-lg-6 my-auto">
+                    <canvas id="satisfactionChart" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-warning text-center" id="dataTab">
+        <div class="container">
+            <p style="color: #fff; font-size:x-large; text-shadow: 1.5px 1.5px #000;">Tweets</p>
+            <div class="row">
+                <div class="card shadow mb-4" style="width: 80rem;">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="tweetTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Tweet</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Tweet</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; Haiqomeister.space All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/new-age.min.js"></script>
+
+    <script src="js/Chart.min.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var table = $('#dataTable').DataTable();
+            var tweetTab = $('#tweetTable').DataTable();
+            showGraph();
+
+            function populateData(key, value, type, timeStamp) {
+                table.row.add([key, value, type, timeStamp]).draw(false);
+            }
+
+            function showGraph() {
+                $.post("databaseCon.php", function(data) {
+                    var dorsconLvl = "";
+                    var globalKey = [];
+                    var globalValue = [];
+                    var globalTimeStamp = [];
+                    var sgKey = [];
+                    var sgValue = [];
+                    var sgTimeStamp = [];
+
+                    for (var i in data) {
+                        if (data[i].type == "singapore") {
+                            if (data[i].identity != "DORSCON") {
+                                sgKey.push(data[i].identity);
+                                sgValue.push(data[i].data);
+                                sgTimeStamp.push(data[i].timeStamp);
+                                populateData(data[i].identity, data[i].data, data[i].type, data[i].timeStamp);
+                            } else {
+                                dorsconLvl = data[i].value;
+                                3.0
+                            }
+                        }
+                        if (data[i].type == "global") {
+                            if (data[i].identity != "Global") {
+                                globalKey.push(data[i].identity);
+                                globalValue.push(data[i].data);
+                                globalTimeStamp.push(data[i].timeStamp);
+                                populateData(data[i].identity, data[i].data, data[i].type, data[i].timeStamp);
+                            }
+                        }
+                    }
+
+                    var sgData = {
+                        labels: sgKey,
+                        datasets: [{
+                            data: sgValue,
+                            backgroundColor: [
+                                window.chartColors.red,
+                                window.chartColors.orange,
+                                window.chartColors.yellow,
+                                window.chartColors.green,
+                                window.chartColors.blue,
+                            ]
+                        }]
+                    };
+
+                    var globalData = {
+                        labels: globalKey,
+                        datasets: [{
+                            data: globalValue,
+                            backgroundColor: [
+                                window.chartColors.red,
+                                window.chartColors.orange,
+                                window.chartColors.yellow,
+                                window.chartColors.green,
+                                window.chartColors.blue,
+                                window.chartColors.purple,
+                            ]
+                        }]
+                    };
+
+                    var sgTarget = document.getElementById('sgChart').getContext('2d');
+                    var globalTarget = document.getElementById('globalChart').getContext('2d');
+
+                    var doughnutSG = new Chart(sgTarget, {
+                        type: 'doughnut',
+                        data: sgData,
+                        options: {
+                            responsive: true,
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Singapore\'s Coronavirus Statistics'
+                            },
+                            animation: {
+                                animateScale: true,
+                                animateRotate: true
+                            },
+                        }
+                    });
+
+                    var doughnutGlobal = new Chart(globalTarget, {
+                        type: 'doughnut',
+                        data: globalData,
+                        options: {
+                            responsive: true,
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Global Coronavirus Statistics'
+                            },
+                            animation: {
+                                animateScale: true,
+                                animateRotate: true
+                            }
+                        }
+                    });
+                });
+                $.post("databaseConSatisfaction.php", function(data) {
+                    var positive = 0;
+                    var negative = 0;
+                    var neutral = 0;;
+                    for (i in data) {
+                        positive = data[i].positive;
+                        negative = data[i].negative;
+                        neutral = data[i].neutral;
+                    }
+
+                    var satisfactionData = {
+                        labels: ["positive", "negative", "neutral"],
+                        datasets: [{
+                            data: [positive, negative, neutral],
+                            backgroundColor: [
+                                window.chartColors.red,
+                                window.chartColors.orange,
+                                window.chartColors.yellow,
+                            ]
+                        }]
+                    };
+
+                    var satisfactionTarget = document.getElementById('satisfactionChart').getContext('2d');
+
+                    var doughnutSatisfaction = new Chart(satisfactionTarget, {
+                        type: 'doughnut',
+                        data: satisfactionData,
+                        options: {
+                            responsive: true,
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    fontColor: '#FFF'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                fontColor: '#FFF',
+                                text: 'Singapore\'s Emotional Doughnut'
+                            },
+                            animation: {
+                                animateScale: true,
+                                animateRotate: true
+                            }
+                        }
+                    });
+
+                    var result = Math.max(positive, negative, neutral);
+
+                    if (result == positive) {
+                        finalEmotion = "happy";
+                    } else if (result == negative) {
+                        finalEmotion = "unhappy";
+                    } else {
+                        finalEmotion = "neutral";
+                    }
+
+                    document.getElementById("conclusionSpeech").innerHTML = "So, with regards to the measurements in Singapore, what can we conclude?<br/><br/>We can see that there are a total of " + positive + " positive tweets , " + negative + " negative tweets and " + neutral + " neutral tweets. Overall, Singaporeans is quite " + finalEmotion + " about the measurements Singapore has placed.";
+                });
+
+                $.post("databaseTweet.php", function(data) {
+                    for (i in data) {
+                        tweetTab.row.add([data[i].twitterId, data[i].twitterText]).draw(false);
+                    }
+                });
+            };
+        });
+    </script>
+
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/dataTables.bootstrap4.min.js"></script>
+    <script src="js/datatables-demo.js"></script>
+</body>
+
+</html>
