@@ -1,4 +1,4 @@
-# UOG_Java_OOP
+# Java Web Scraper
 
 Code Language: Java (Eclipse)
 
