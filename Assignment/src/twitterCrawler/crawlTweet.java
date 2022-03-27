@@ -77,10 +77,10 @@ public class crawlTweet {
 
 		// Get all the twitter data
 		ConfigurationBuilder cb = new ConfigurationBuilder();
-		cb.setDebugEnabled(true).setOAuthConsumerKey("Xv42imr5ty11OFUW2LkxAkNLq")
-				.setOAuthConsumerSecret("Kc0RiHxFiIJBYJjJoQyhRSREQBZGL7kkdjWKEENrs2h2ha1d8U")
-				.setOAuthAccessToken("1237729274536144896-3FvJ5Bc5gAZY2IMNUuI8gqjE0KvTL5")
-				.setOAuthAccessTokenSecret("tT619ED8P6JUpnJvUQH2bE2odXA8zT5Uksj9aHnKqh7b3");
+		cb.setDebugEnabled(true).setOAuthConsumerKey("")
+				.setOAuthConsumerSecret("")
+				.setOAuthAccessToken("")
+				.setOAuthAccessTokenSecret("");
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
 
