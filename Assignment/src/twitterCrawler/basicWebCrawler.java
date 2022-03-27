@@ -133,9 +133,9 @@ public class basicWebCrawler {
 
 	public static void main(String[] args) {
 		try {
-			String url = "jdbc:mysql://194.59.164.158:3306/u645071659_makerspace";
+			String url = "jdbc:mysql://";
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(url, "u645071659_hyperx66","s9740499b");
+			conn = DriverManager.getConnection(url, "","");
 			System.out.println("Database connection established");
 			String truncateQuery = "TRUNCATE TABLE caseFindings";
 			conn.prepareStatement(truncateQuery).execute();
